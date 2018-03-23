@@ -139,6 +139,36 @@ class TwoLayerNet(object):
 
         return loss, grads
 
+def affine_relu_bn_forward(x, w, b, gamma, beta, bn_param):
+    """
+    Convenience layer that perorms an affine transform followed by a ReLU
+
+    Inputs:
+    - x: Input to the affine layer
+    - w, b: Weights for the affine layer
+
+    Returns a tuple of:
+    - out: Output from the ReLU
+    - cache: Object to give to the backward pass
+    """
+    out1, fc_cache = affine_forward(x, w, b)
+    out2, norm_cache = batchnorm_forward(out1, gamma, beta, bn_param)
+    out, relu_cache = relu_forward(out2)
+    cache = (fc_cache, norm_cache, relu_cache)
+    return out, cache
+
+
+def affine_relu_bn_backward(dout, cache):
+    """
+    Backward pass for the affine-relu convenience layer
+    """
+    fc_cache, norm_cache, relu_cache = cache
+    da = relu_backward(dout, relu_cache)
+    d_batch, dgamma, dbeta = batchnorm_backward(da, norm_cache)
+    dx, dw, db = affine_backward(d_batch, fc_cache)
+
+    return dx, dw, db, dgamma, dbeta
+
 
 class FullyConnectedNet(object):
     """
@@ -198,10 +228,14 @@ class FullyConnectedNet(object):
         # beta2, etc. Scale parameters should be initialized to one and shift      #
         # parameters should be initialized to zero.                                #
         ############################################################################
+
         for i in range(self.num_layers):
             if i == 0:
                 input_dim = input_dim
                 output_dim = hidden_dims[0]
+                self.params['W{}'.format(i+1)] = np.random.normal(0, weight_scale, input_dim*output_dim).\
+                    reshape(input_dim, output_dim)
+                self.params['b{}'.format(i+1)] = np.zeros(output_dim)
             elif i == self.num_layers - 1:
                 w_b_index = self.num_layers
                 input_dim = hidden_dims[-1]
@@ -213,9 +247,13 @@ class FullyConnectedNet(object):
                 hidden_index = i - 1
                 input_dim = hidden_dims[hidden_index]
                 output_dim = hidden_dims[hidden_index + 1]
-            self.params['W{}'.format(i+1)] = np.random.normal(0, weight_scale, input_dim*output_dim).\
-                reshape(input_dim, output_dim)
-            self.params['b{}'.format(i+1)] = np.zeros(output_dim)
+                self.params['W{}'.format(i+1)] = np.random.normal(0, weight_scale, input_dim*output_dim).\
+                    reshape(input_dim, output_dim)
+                self.params['b{}'.format(i+1)] = np.zeros(output_dim)
+
+            self.params['gamma{}'.format(i + 1)] = np.ones(output_dim)
+            self.params['beta{}'.format(i + 1)] = np.zeros(output_dim)
+
 
         ############################################################################
         #                             END OF YOUR CODE                             #
@@ -281,7 +319,12 @@ class FullyConnectedNet(object):
             layer_index = i+1
             w = self.params['W{}'.format(layer_index)]
             b = self.params['b{}'.format(layer_index)]
-            x, cache = affine_relu_forward(x, w, b)
+            gamma = self.params['gamma{}'.format(layer_index)]
+            beta = self.params['beta{}'.format(layer_index)]
+            if self.use_batchnorm:
+                x, cache = affine_relu_bn_forward(x, w, b, gamma, beta,  self.bn_params[i])
+            else:
+                x, cache = affine_relu_forward(x, w, b)
             cache_dict['cache{}'.format(layer_index)] = cache
 
             # reg
@@ -329,13 +372,20 @@ class FullyConnectedNet(object):
 
         for i in range(self.num_layers - 1):
             layer_index = self.num_layers - 1 - i
+            #print ("layer_index: ", layer_index)
             cache = cache_dict['cache{}'.format(layer_index)]
             W = self.params['W{}'.format(layer_index)]
-            dx, dw, db = affine_relu_backward(dx, cache)
 
-            #regularization
+            dx, dw, db, dgamma, dbeta = affine_relu_bn_backward(dx, cache)
+
+            # regularization
             dw += self.reg * W
 
+            # update gamma, beta
+            grads['gamma{}'.format(layer_index)] = dgamma
+            grads['beta{}'.format(layer_index)] = dbeta
+
+            # update w, b
             grads['W{}'.format(layer_index)] = dw
             grads['b{}'.format(layer_index)] = db
 
