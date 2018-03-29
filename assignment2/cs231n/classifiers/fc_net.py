@@ -170,6 +170,8 @@ def affine_relu_bn_backward(dout, cache):
     return dx, dw, db, dgamma, dbeta
 
 
+
+
 class FullyConnectedNet(object):
     """
     A fully-connected neural network with an arbitrary number of hidden layers,
@@ -251,8 +253,9 @@ class FullyConnectedNet(object):
                     reshape(input_dim, output_dim)
                 self.params['b{}'.format(i+1)] = np.zeros(output_dim)
 
-            self.params['gamma{}'.format(i + 1)] = np.ones(output_dim)
-            self.params['beta{}'.format(i + 1)] = np.zeros(output_dim)
+            if self.use_batchnorm:
+                self.params['gamma{}'.format(i + 1)] = np.ones(output_dim)
+                self.params['beta{}'.format(i + 1)] = np.zeros(output_dim)
 
 
         ############################################################################
@@ -317,15 +320,23 @@ class FullyConnectedNet(object):
         W_reg_sum = 0.0
         for i in range(self.num_layers-1):
             layer_index = i+1
+            bn_cache, ff_cache, drop_cache = None, None, None
+
+
             w = self.params['W{}'.format(layer_index)]
             b = self.params['b{}'.format(layer_index)]
-            gamma = self.params['gamma{}'.format(layer_index)]
-            beta = self.params['beta{}'.format(layer_index)]
+
+
             if self.use_batchnorm:
-                x, cache = affine_relu_bn_forward(x, w, b, gamma, beta,  self.bn_params[i])
+                gamma = self.params['gamma{}'.format(layer_index)]
+                beta = self.params['beta{}'.format(layer_index)]
+                x, bn_cache = affine_relu_bn_forward(x, w, b, gamma, beta,  self.bn_params[i])
             else:
-                x, cache = affine_relu_forward(x, w, b)
-            cache_dict['cache{}'.format(layer_index)] = cache
+                x, ff_cache = affine_relu_forward(x, w, b)
+            if self.use_dropout:
+                x, drop_cache = dropout_forward(x, self.dropout_param)
+
+            cache_dict['cache{}'.format(layer_index)] = (bn_cache, ff_cache, drop_cache)
 
             # reg
             w_reg_sum = np.sum(w**2)
@@ -373,17 +384,23 @@ class FullyConnectedNet(object):
         for i in range(self.num_layers - 1):
             layer_index = self.num_layers - 1 - i
             #print ("layer_index: ", layer_index)
-            cache = cache_dict['cache{}'.format(layer_index)]
+            bn_cache, ff_cache, drop_cache = cache_dict['cache{}'.format(layer_index)]
             W = self.params['W{}'.format(layer_index)]
 
-            dx, dw, db, dgamma, dbeta = affine_relu_bn_backward(dx, cache)
+            if self.use_dropout:
+                dx = dropout_backward(dx, drop_cache)
+
+            if self.use_batchnorm:
+                dx, dw, db, dgamma, dbeta = affine_relu_bn_backward(dx, bn_cache)
+                # update gamma, beta
+                grads['gamma{}'.format(layer_index)] = dgamma
+                grads['beta{}'.format(layer_index)] = dbeta
+            else:
+                dx, dw, db = affine_relu_backward(dx, ff_cache)
 
             # regularization
             dw += self.reg * W
 
-            # update gamma, beta
-            grads['gamma{}'.format(layer_index)] = dgamma
-            grads['beta{}'.format(layer_index)] = dbeta
 
             # update w, b
             grads['W{}'.format(layer_index)] = dw
