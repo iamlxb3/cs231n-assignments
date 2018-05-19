@@ -2,7 +2,10 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+datasets\
+datasets/
+*.npz
+*.npz.1
 # C extensions
 *.so
 
