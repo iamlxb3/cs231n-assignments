@@ -2,33 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9161d9a9-9fb6-415f-9615-7804ba584192" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/.gitignore" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/README.md" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/collectSubmission.sh" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/cs231n/__init__.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/cs231n/classifiers/__init__.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/cs231n/classifiers/k_nearest_neighbor.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/cs231n/classifiers/linear_classifier.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/cs231n/classifiers/linear_svm.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/cs231n/classifiers/neural_net.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/cs231n/classifiers/softmax.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/cs231n/data_utils.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/cs231n/datasets/.gitignore" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/cs231n/datasets/get_datasets.sh" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/cs231n/features.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/cs231n/gradient_check.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/cs231n/vis_utils.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/features.ipynb" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/frameworkpython" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/knn.ipynb" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/requirements.txt" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/setup_googlecloud.sh" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/softmax.ipynb" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/start_ipython_osx.sh" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/svm.ipynb" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/assignment1/two_layer_net.ipynb" />
       <change beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -42,8 +17,8 @@
       <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="9" lean-forward="false" selection-start-line="5" selection-start-column="9" selection-end-line="5" selection-end-column="9" />
+            <state relative-caret-position="60">
+              <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -245,8 +220,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="9" lean-forward="false" selection-start-line="5" selection-start-column="9" selection-end-line="5" selection-end-column="9" />
+        <state relative-caret-position="60">
+          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding />
         </state>
       </provider>
